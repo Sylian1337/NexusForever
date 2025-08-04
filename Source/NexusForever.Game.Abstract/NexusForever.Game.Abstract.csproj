@@ -17,4 +17,8 @@
     <ProjectReference Include="..\NexusForever.Network\NexusForever.Network.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Trading\" />
+  </ItemGroup>
+
 </Project>
