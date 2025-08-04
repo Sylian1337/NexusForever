@@ -10,8 +10,8 @@ namespace NexusForever.Network.World.Message.Model
 
         public void Write(GamePacketWriter writer)
         {
-            writer.Write(Credits);
             writer.Write(UnitId);
+            writer.Write(Credits);
         }
     }
 }
