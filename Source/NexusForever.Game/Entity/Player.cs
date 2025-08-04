@@ -216,6 +216,7 @@ namespace NexusForever.Game.Entity
         public ICharacterKeybindingManager KeybindingManager { get; private set; }
         public IDatacubeManager DatacubeManager { get; private set; }
         public IMailManager MailManager { get; private set; }
+        public IP2PTradeManager P2PTradeManager { get; private set; }      // Sylian
         public IZoneMapManager ZoneMapManager { get; private set; }
         public IQuestManager QuestManager { get; private set; }
         public ICharacterAchievementManager AchievementManager { get; private set; }
@@ -317,6 +318,7 @@ namespace NexusForever.Game.Entity
             KeybindingManager       = new CharacterKeybindingManager(this, model);
             DatacubeManager         = new DatacubeManager(this, model);
             MailManager             = new MailManager(this, model);
+            P2PTradeManager         = new P2PTradeManager(this); // Sylian
             ZoneMapManager          = new ZoneMapManager(this, model);
             QuestManager            = new QuestManager(this, model);
             AchievementManager      = new CharacterAchievementManager(this, model);
