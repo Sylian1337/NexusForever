@@ -10,9 +10,24 @@ namespace NexusForever.Game.Abstract.P2PTrading
 {
     public interface ITradeSession
     {
+        uint TradeId { get; set; }
 
         IPlayer Initiator { get; set; }
         IPlayer Target { get; set; }
+
+        uint InitiatorId { get; }
+        uint TargetId { get; }
+
+
+        void NotifyTradeInvite();
+
+        void NotifyTradeCancel();
+        void NotifyTradeDeclined();
+
+        void SendResultTo(ServerP2PTradeResult.P2PTradeResult result, bool cancelled, IPlayer player);
+
+        /*
+
 
 
         bool InitiatorCommitted {  get; set; }
@@ -35,6 +50,6 @@ namespace NexusForever.Game.Abstract.P2PTrading
 
         void AcceptTradeInvite();
         void SetMoneyTrade(ulong credits, IPlayer whoUpdated);
-        void CommitTrade(IPlayer whoCommitted);
+        void CommitTrade(IPlayer whoCommitted);*/
     }
 }

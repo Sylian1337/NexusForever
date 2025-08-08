@@ -25,6 +25,7 @@ namespace NexusForever.Game.Abstract.Entity
         IIdentity Identity { get; }
         ulong CharacterId { get; }
         string Name { get; }
+        uint TradeId { get; set; }      // Again, might be wrong and should be in the Character instead.
         Sex Sex { get; set; }
         Race Race { get; set; }
         Class Class { get; }
@@ -75,7 +76,6 @@ namespace NexusForever.Game.Abstract.Entity
         ICharacterKeybindingManager KeybindingManager { get; }
         IDatacubeManager DatacubeManager { get; }
         IMailManager MailManager { get; }
-        IP2PTradeManager P2PTradeManager { get; }   // Sylian
         IZoneMapManager ZoneMapManager { get; }
         IQuestManager QuestManager { get; }
         ICharacterAchievementManager AchievementManager { get; }

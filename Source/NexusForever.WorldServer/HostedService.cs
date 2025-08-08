@@ -125,6 +125,7 @@ namespace NexusForever.WorldServer
 
             AssetManager.Instance.Initialise();
             ItemManager.Instance.Initialise();
+            P2PTradeManager.Instance.Initialise();
             GlobalSpellManager.Instance.Initialise();
             GlobalQuestManager.Instance.Initialise();
 

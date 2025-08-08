@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using NexusForever.Game.Abstract;
+using NexusForever.Game.Abstract.Entity;
 using NexusForever.Game.Achievement;
 using NexusForever.Game.Character;
 using NexusForever.Game.Cinematic;
@@ -32,6 +33,7 @@ namespace NexusForever.Game
             sc.AddSingletonLegacy<ICleanupManager, CleanupManager>();
             sc.AddSingletonLegacy<IDisableManager, DisableManager>();
             sc.AddSingletonLegacy<IItemManager, ItemManager>();
+            sc.AddSingletonLegacy<IP2PTradeManager, P2PTradeManager>();     // Might be the wrong way, hope not.
             sc.AddSingletonLegacy<IRealmContext, RealmContext>();
             sc.AddSingletonLegacy<IShutdownManager, ShutdownManager>();
             sc.AddSingletonLegacy<IStoryBuilder, StoryBuilder>();

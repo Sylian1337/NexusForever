@@ -9,16 +9,145 @@ using NexusForever.Network.Session;
 using NexusForever.Network.World.Message.Model;
 using NexusForever.Shared;
 using NLog;
+using System.Diagnostics;
 
 namespace NexusForever.Game.Entity
 {
-    public class P2PTradeManager : IP2PTradeManager
+    public sealed class P2PTradeManager : Singleton<P2PTradeManager>, IP2PTradeManager
     {
 
-        // Logger, of course
+        private uint _nextTradeId = 0;
+
         private static readonly ILogger log = LogManager.GetCurrentClassLogger();
 
+        private readonly Dictionary<uint, TradeSession> _activeTrades = new();
 
+        public void Initialise()
+        {
+            var sw = Stopwatch.StartNew();
+            log.Info("Initialise P2P trade manager...");
+
+            log.Info($"P2P trade manager started in {sw.ElapsedMilliseconds}ms.");
+        }
+
+        public void StartTrade(IPlayer initiator, IPlayer target)
+        {
+            var id = _nextTradeId++;
+            var session = new TradeSession(id, initiator, target);
+
+            // Store references in both players for convenience
+            initiator.TradeId = id;
+            target.TradeId = id;
+
+            _activeTrades[id] = session;
+
+            // If this is uncommented, it straight up breaks and makes the player fuck up, with sending a ton of cancel messages.
+            // Dont know how to fix it yet.
+            session.NotifyTradeInvite();
+        }
+
+        public void CancelTrade(TradeSession session)
+        {
+            _activeTrades.Remove(session.TradeId);
+
+            session.Initiator.TradeId = 0;
+            session.Target.TradeId = 0;
+
+            session.NotifyTradeCancel();
+        }
+
+
+        public void DeclineTrade(ITradeSession session)
+        {
+            _activeTrades.Remove(session.TradeId);
+
+            session.Initiator.TradeId = 0;
+            session.Target.TradeId = 0;
+
+            session.NotifyTradeDeclined();
+        }
+
+
+
+
+        public ITradeSession GetTradeById(uint tradeId)
+        {
+            if (_activeTrades.TryGetValue(tradeId, out var session))
+            {
+                return session;
+            }
+            else
+            {
+                // Something went wrong.
+                return null;
+            }
+        }
+
+
+        /// <summary>
+        /// Sends a P2P trade error result to the specified player.
+        /// This is used when a trade request cannot be started or continued,
+        /// for example due to the target being busy, missing, or not allowed to trade.
+        /// </summary>
+        /// <param name="player">The player who will receive the error message.</param>
+        /// <param name="reason">The specific trade failure reason to send.</param>
+        public void SendTradeErrorTo(IPlayer player, ServerP2PTradeResult.P2PTradeResult reason)
+        {
+            if (player?.Session == null)
+            {
+                log.Warn("Attempted to send trade error, but player or session was null.");
+                return;
+            }
+
+            player.Session.EnqueueMessageEncrypted(new ServerP2PTradeResult
+            {
+                Result = reason,
+                Cancelled = true
+            });
+
+            log.Debug($"Trade error '{reason}' sent to player '{player.Name}' (ID: {player.EntityId}).");
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        /*
+        public void CancelTrade(TradeSession session)
+        {
+            _activeTrades.Remove(session.Id);
+
+            session.Initiator.ActiveTrade = null;
+            session.Target.ActiveTrade = null;
+
+            session.CancelTrade();
+        }*/
+
+        /*
         // Player who owns this instance.
         private readonly IPlayer player;
 
@@ -151,7 +280,7 @@ namespace NexusForever.Game.Entity
             if (HasActiveTrade)
                 player.P2PTradeManager.TradeSession.CommitTrade(player);
 
-        }
+        }*/
     }
 
 }
