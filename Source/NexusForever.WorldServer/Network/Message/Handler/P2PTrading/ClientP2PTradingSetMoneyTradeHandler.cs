@@ -7,7 +7,7 @@ namespace NexusForever.WorldServer.Network.Message.Handler.P2PTrading
     {
         public void HandleMessage(IWorldSession session, ClientP2PTradingSetMoney message)
         {
-            session.Player.P2PTradeManager.InitiateSetTradeMoney(message.Credits);
+            //session.Player.P2PTradeManager.InitiateSetTradeMoney(message.Credits);
         }
     }
 }

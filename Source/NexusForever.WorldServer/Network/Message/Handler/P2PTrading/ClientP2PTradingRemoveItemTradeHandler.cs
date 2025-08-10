@@ -7,7 +7,7 @@ namespace NexusForever.WorldServer.Network.Message.Handler.P2PTrading
     {
         public void HandleMessage(IWorldSession session, ClientP2PTradingRemoveItem message)
         {
-            session.Player.P2PTradeManager?.InitiateRemoveItem(message.ItemGuid);
+            //session.Player.P2PTradeManager?.InitiateRemoveItem(message.ItemGuid);
         }
     }
 }

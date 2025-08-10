@@ -75,6 +75,7 @@ namespace NexusForever.Game.Trading
         /// </summary>
         public void NotifyTradeDeclined()
         {
+            // Both needs to be sent, otherwise one cant trade.
             SendResultTo(ServerP2PTradeResult.P2PTradeResult.PlayerDeclinedInvite, true, Initiator);
             SendResultTo(ServerP2PTradeResult.P2PTradeResult.PlayerDeclinedInvite, true, Target);
         }

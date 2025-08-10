@@ -24,13 +24,6 @@ namespace NexusForever.WorldServer.Network.Message.Handler.P2PTrading
 
         public void HandleMessage(IWorldSession session, ClientP2PTradingDeclineInvite message)
         {
-            var p = PlayerManager.Instance.GetPlayer(session.Player.Identity.Id);
-            var p2 = PlayerManager.Instance.GetPlayer(session.Player.Guid);
-
-            Console.WriteLine($"{p?.Name}  P1");
-            Console.WriteLine($"{p2?.Name} P2");
-
-
             // Get trade by ID.
             ITradeSession tradeSession = tradeManager.GetTradeById(session.Player.TradeId);
 

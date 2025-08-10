@@ -39,10 +39,11 @@ namespace NexusForever.Game.Entity
             initiator.TradeId = id;
             target.TradeId = id;
 
+            
+
+
             _activeTrades[id] = session;
 
-            // If this is uncommented, it straight up breaks and makes the player fuck up, with sending a ton of cancel messages.
-            // Dont know how to fix it yet.
             session.NotifyTradeInvite();
         }
 

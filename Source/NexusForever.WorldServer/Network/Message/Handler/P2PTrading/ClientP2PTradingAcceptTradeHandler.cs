@@ -7,7 +7,7 @@ namespace NexusForever.WorldServer.Network.Message.Handler.P2PTrading
     {
         public void HandleMessage(IWorldSession session, ClientP2PTradingAcceptInvite message)
         {
-            session.Player.P2PTradeManager?.InitiateAcceptInvite();
+            //session.Player.P2PTradeManager?.InitiateAcceptInvite();
         }
     }
 }

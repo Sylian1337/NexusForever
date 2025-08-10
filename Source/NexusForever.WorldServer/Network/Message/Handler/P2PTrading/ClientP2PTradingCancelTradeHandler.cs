@@ -7,7 +7,7 @@ namespace NexusForever.WorldServer.Network.Message.Handler.P2PTrading
     {
         public void HandleMessage(IWorldSession session, ClientP2PTradingCancelTrade message)
         {
-            session.Player.P2PTradeManager.InitiateCancelTrade();
+            //session.Player.P2PTradeManager.InitiateCancelTrade();
         }
     }
 }
