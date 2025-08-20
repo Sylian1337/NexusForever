@@ -24,14 +24,18 @@ namespace NexusForever.WorldServer.Network.Message.Handler.P2PTrading
 
         public void HandleMessage(IWorldSession session, ClientP2PTradingDeclineInvite message)
         {
-            // Get trade by ID.
-            ITradeSession tradeSession = tradeManager.GetTradeById(session.Player.TradeId);
+            // Store player.
+            IPlayer player = session.Player;
 
-            //TODO: Add more checks.
-            // Maybe even a decline/cancel to both players if the trade was not found somehow.
+            // Trade session.
+            var tradeSession = tradeManager.GetTradeById(player.TradeId);
+            if (!tradeManager.TryResolvePlayers(player, tradeSession, out var initiator, out var target))
+            {
+                tradeManager.SendTradeErrorTo(player, ServerP2PTradeResult.P2PTradeResult.MissingPlayer);
+                return;
+            }
 
-            //Send the trade session that should be cancelled.
-            tradeManager.DeclineTrade(tradeSession);
+            tradeManager.DeclineTrade(tradeSession, initiator, target);
         }
     }
 }

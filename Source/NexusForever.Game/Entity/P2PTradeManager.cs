@@ -9,6 +9,7 @@ using NexusForever.Network.Session;
 using NexusForever.Network.World.Message.Model;
 using NexusForever.Shared;
 using NLog;
+using NLog.Targets;
 using System.Diagnostics;
 
 namespace NexusForever.Game.Entity
@@ -30,7 +31,12 @@ namespace NexusForever.Game.Entity
             log.Info($"P2P trade manager started in {sw.ElapsedMilliseconds}ms.");
         }
 
-        public void StartTrade(IPlayer initiator, IPlayer target)
+        /// <summary>
+        /// Called when trade invite is sent to target.
+        /// </summary>
+        /// <param name="initiator"></param>
+        /// <param name="target"></param>
+        public void InitiateTrade(IPlayer initiator, IPlayer target)
         {
             var id = _nextTradeId++;
             var session = new TradeSession(id, initiator, target);
@@ -39,37 +45,35 @@ namespace NexusForever.Game.Entity
             initiator.TradeId = id;
             target.TradeId = id;
 
-            
-
-
             _activeTrades[id] = session;
-
-            session.NotifyTradeInvite();
+            session.NotifyTradeInvite(initiator, target);
         }
 
-        public void CancelTrade(TradeSession session)
+        public void CancelTrade(TradeSession session, IPlayer initiator, IPlayer target)
         {
             _activeTrades.Remove(session.TradeId);
 
-            session.Initiator.TradeId = 0;
-            session.Target.TradeId = 0;
+            initiator.TradeId = 0;
+            target.TradeId = 0;
 
-            session.NotifyTradeCancel();
+            session.NotifyTradeCancel(initiator, target);
         }
 
 
-        public void DeclineTrade(ITradeSession session)
+        public void DeclineTrade(ITradeSession session, IPlayer initiator, IPlayer target)
         {
             _activeTrades.Remove(session.TradeId);
 
-            session.Initiator.TradeId = 0;
-            session.Target.TradeId = 0;
+            initiator.TradeId = 0;
+            target.TradeId = 0;
 
-            session.NotifyTradeDeclined();
+            session.NotifyTradeDeclined(initiator, target);
         }
 
-
-
+        public void StartTrade(ITradeSession session, IPlayer initiator, IPlayer target)
+        {
+            session.NotifyTradeStart(initiator, target);
+        }
 
         public ITradeSession GetTradeById(uint tradeId)
         {
@@ -110,6 +114,36 @@ namespace NexusForever.Game.Entity
         }
 
 
+        /// <summary>
+        /// Resolves the initiator and target players for a given trade session,
+        /// given one of the players involved.
+        /// </summary>
+        /// <param name="currentPlayer">The player we already know about.</param>
+        /// <param name="tradeSession">The trade session they are part of.</param>
+        /// <param name="initiator">The resolved initiator player.</param>
+        /// <param name="target">The resolved target player.</param>
+        /// <returns>True if both players could be resolved; otherwise false.</returns>
+        public bool TryResolvePlayers(IPlayer currentPlayer, ITradeSession tradeSession, out IPlayer initiator, out IPlayer target)
+        {
+            initiator = null;
+            target = null;
+
+            if (tradeSession == null)
+                return false;
+
+            if (tradeSession.IsInitiator(currentPlayer.Guid))
+            {
+                initiator = currentPlayer;
+                target = currentPlayer.GetVisible<IPlayer>(tradeSession.TargetId);
+            }
+            else
+            {
+                target = currentPlayer;
+                initiator = currentPlayer.GetVisible<IPlayer>(tradeSession.InitiatorId);
+            }
+
+            return initiator != null && target != null;
+        }
 
 
 

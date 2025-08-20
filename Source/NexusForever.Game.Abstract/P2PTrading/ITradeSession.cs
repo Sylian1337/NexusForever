@@ -12,19 +12,19 @@ namespace NexusForever.Game.Abstract.P2PTrading
     {
         uint TradeId { get; set; }
 
-        IPlayer Initiator { get; set; }
-        IPlayer Target { get; set; }
-
-        uint InitiatorId { get; }
-        uint TargetId { get; }
+        uint InitiatorId { get; set; }
+        uint TargetId { get; set; }
 
 
-        void NotifyTradeInvite();
+        void NotifyTradeInvite(IPlayer initiator, IPlayer target);
+        void NotifyTradeStart(IPlayer initiator, IPlayer target);
 
-        void NotifyTradeCancel();
-        void NotifyTradeDeclined();
+        void NotifyTradeCancel(IPlayer initiator, IPlayer target);
+        void NotifyTradeDeclined(IPlayer initiator, IPlayer target);
 
         void SendResultTo(ServerP2PTradeResult.P2PTradeResult result, bool cancelled, IPlayer player);
+
+        bool IsInitiator(uint guid);
 
         /*
 

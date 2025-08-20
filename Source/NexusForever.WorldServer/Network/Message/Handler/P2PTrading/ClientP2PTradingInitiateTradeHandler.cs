@@ -26,12 +26,12 @@ namespace NexusForever.WorldServer.Network.Message.Handler.P2PTrading
         #endregion
 
         public void HandleMessage(IWorldSession session, ClientP2PTradingInitiateTrade message)
-        {
-            var initiator = session.Player;
-            var targetUnit = initiator.Map.GetEntity<IUnitEntity>(message.TargetUnitId);
+        {   
+            IPlayer initiator = session.Player;
+            IPlayer targetPlayer = initiator.GetVisible<IPlayer>(message.TargetUnitId);
 
-            // Ensure the target is actually a player.
-            if (targetUnit is not IPlayer targetPlayer)
+            // Check to see if the player is null or not.
+            if (targetPlayer == null)
             {
                 tradeManager.SendTradeErrorTo(initiator, ServerP2PTradeResult.P2PTradeResult.MissingPlayer);
                 return;
@@ -55,7 +55,7 @@ namespace NexusForever.WorldServer.Network.Message.Handler.P2PTrading
             }
 
             // Pass the validated players to the manager
-            tradeManager.StartTrade(initiator, targetPlayer);
+            tradeManager.InitiateTrade(initiator, targetPlayer);
         }
     }
 }

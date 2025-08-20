@@ -1,7 +1,10 @@
 ﻿using NexusForever.Game.Abstract.Entity;
 using NexusForever.Game.Abstract.P2PTrading;
+using NexusForever.Game.Entity;
+using NexusForever.Game.Map;
 using NexusForever.Game.Static.Entity;
 using NexusForever.GameTable;
+using NexusForever.GameTable.Model;
 using NexusForever.Network.World.Message.Model;
 using NexusForever.Network.World.Message.Static;
 using NexusForever.Shared;
@@ -20,46 +23,62 @@ namespace NexusForever.Game.Trading
         /// </summary>
         public uint TradeId { get; set; }
 
-        public IPlayer Initiator { get; set; }
-        public IPlayer Target { get; set; }
+        //public IPlayer Initiator { get; set; }
+        //public IPlayer Target { get; set; }
 
         /// <summary>
         /// Initiator´s Unit Id.
         /// </summary>
-        public uint InitiatorId => Initiator.Guid;
+        public uint InitiatorId { get; set; }
 
         /// <summary>
         /// The target´s Unit Id.
         /// </summary>
-        public uint TargetId => Target.Guid;
+        public uint TargetId { get; set; }
 
 
         public TradeSession(uint tradeId, IPlayer initiator, IPlayer target)
         {
             TradeId = tradeId;
-            Initiator = initiator;
-            Target = target;
+            InitiatorId = initiator.Guid;
+            TargetId = target.Guid;
         }
 
         /// <summary>
         /// Notify target about a new trade invite.
         /// </summary>
-        public void NotifyTradeInvite()
+        public void NotifyTradeInvite(IPlayer initiator, IPlayer target)
         {
-            // Everything is wrong here, it has to do with that damn message id, but cant figure out the problem.
             var packet = new ServerP2PTradeInvite
             {
                 TradeInviterUnitId = InitiatorId
             };
 
-            Target.Session.EnqueueMessageEncrypted(packet);
+            target.Session.EnqueueMessageEncrypted(packet);
+        }
+
+
+        /// <summary>
+        /// Notify both on trade start accepted.
+        /// Called when the player accepts the trade.
+        /// </summary>
+        public void NotifyTradeStart(IPlayer initiator, IPlayer target)
+        {
+            SendResultTo(ServerP2PTradeResult.P2PTradeResult.PlayerAcceptedInvite, false, initiator);
+            SendResultTo(ServerP2PTradeResult.P2PTradeResult.PlayerAcceptedInvite, false, target);
         }
 
         /// <summary>
         /// Notify other player about trade declined.
         /// </summary>
-        public void NotifyTradeCancel()
+        public void NotifyTradeCancel(IPlayer initiator, IPlayer target)
         {
+
+            // Testing.
+            
+            
+
+
             /*
             var packet = new ServerP2PTradeInvite
             {
@@ -73,11 +92,11 @@ namespace NexusForever.Game.Trading
         /// <summary>
         /// Notify initiator about trade invite declined.
         /// </summary>
-        public void NotifyTradeDeclined()
+        public void NotifyTradeDeclined(IPlayer initiator, IPlayer target)
         {
             // Both needs to be sent, otherwise one cant trade.
-            SendResultTo(ServerP2PTradeResult.P2PTradeResult.PlayerDeclinedInvite, true, Initiator);
-            SendResultTo(ServerP2PTradeResult.P2PTradeResult.PlayerDeclinedInvite, true, Target);
+            SendResultTo(ServerP2PTradeResult.P2PTradeResult.PlayerDeclinedInvite, true, initiator);
+            SendResultTo(ServerP2PTradeResult.P2PTradeResult.PlayerDeclinedInvite, true, target);
         }
 
         /// <summary>
@@ -97,6 +116,8 @@ namespace NexusForever.Game.Trading
             player.Session.EnqueueMessageEncrypted(packet);
         }
 
+        public bool IsInitiator(uint guid) => guid == InitiatorId ? true : false;
+             
     }
 
 
